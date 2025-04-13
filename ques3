@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Throttled Image Slider</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 30px;
+    }
+    img {
+      width: 600px;
+      height: 400px;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #aaa;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 20px 10px;
+      cursor: pointer;
+    }
+    #slide-number {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🖼️ Throttled Image Slider</h2>
+  <img id="slider" src="https://picsum.photos/600/400?random=1" alt="Random Image" />
+  <div>
+    <button id="prevBtn">⬅ Previous</button>
+    <button id="nextBtn">Next ➡</button>
+  </div>
+  <div id="slide-number">Slide #1</div>
+
+  <script>
+    const image = document.getElementById("slider");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const slideNumText = document.getElementById("slide-number");
+
+    let slideNumber = 1;
+    let lastClickTime = 0;
+    let clickCount = 0;
+    const THROTTLE_TIME = 1000; 
+    const SPAM_LIMIT = 3;
+
+    function updateImage() {
+      const randomId = Math.floor(Math.random() * 1000);
+      image.src = `https://picsum.photos/600/400?random=${randomId}`;
+      slideNumText.textContent = `Slide #${slideNumber}`;
+    }
+
+    function handleNavigation(direction) {
+      const now = Date.now();
+
+      if (now - lastClickTime < THROTTLE_TIME) {
+        clickCount++;
+
+        if (clickCount > SPAM_LIMIT) {
+          alert("Chill chill, loading it!!");
+          return;
+        }
+        return; 
+      }
+
+    
+      if (direction === "next") {
+        slideNumber++;
+      } else if (direction === "prev" && slideNumber > 1) {
+        slideNumber--;
+      }
+
+      updateImage();
+
+      lastClickTime = now;
+      clickCount = 1;
+    }
+
+    nextBtn.addEventListener("click", () => handleNavigation("next"));
+    prevBtn.addEventListener("click", () => handleNavigation("prev"));
+  </script>
+
+</body>
+</html>
